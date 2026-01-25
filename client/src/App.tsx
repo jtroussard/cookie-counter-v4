@@ -1,36 +1,39 @@
-import { useEffect, useState } from 'react'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Layout from './layouts/Layout';
+import LandingPage from './pages/LandingPage';
+import TestPage from './pages/TestPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
-  const [serverMessage, setServerMessage] = useState<string>('Loading...')
-
-  useEffect(() => {
-    fetch('http://localhost:3001/api/health')
-      .then(res => res.json())
-      .then(data => setServerMessage(data.message))
-      .catch(err => setServerMessage('Error connecting to server: ' + err.message))
-  }, [])
+const AppRoutes = () => {
+  const { session } = useAuth();
 
   return (
-    <div className="container mt-5">
-      <div className="card text-center">
-        <div className="card-header">
-          Cookie Counter v4
-        </div>
-        <div className="card-body">
-          <h5 className="card-title">Hello World!</h5>
-          <p className="card-text">
-            Front-end: React + Vite + Bootstrap<br />
-            Back-end: {serverMessage}
-          </p>
-          <a href="#" className="btn btn-primary">Go somewhere</a>
-        </div>
-        <div className="card-footer text-muted">
-          Scaffolded Successfully
-        </div>
-      </div>
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={session ? <Navigate to="/test" /> : <LandingPage />} />
+      <Route
+        path="/test"
+        element={
+          <ProtectedRoute>
+            <TestPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Layout>
+          <AppRoutes />
+        </Layout>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
