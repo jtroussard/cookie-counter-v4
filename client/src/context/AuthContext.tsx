@@ -6,6 +6,8 @@ interface AuthContextType {
     session: Session | null;
     user: User | null;
     loading: boolean;
+    globalLoading: boolean;
+    setGlobalLoading: (loading: boolean) => void;
     signOut: () => Promise<void>;
 }
 
@@ -15,6 +17,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [globalLoading, setGlobalLoading] = useState(false);
 
     useEffect(() => {
         // Get initial session
@@ -29,6 +32,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+            setGlobalLoading(false);
         });
 
         return () => {
@@ -44,6 +48,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         session,
         user,
         loading,
+        globalLoading,
+        setGlobalLoading,
         signOut,
     };
 

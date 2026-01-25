@@ -10,13 +10,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const { session, loading } = useAuth();
 
     if (loading) {
-        return (
-            <div className="vh-100 d-flex align-items-center justify-content-center">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
+        return null; // Layout will show the loader based on the same 'loading' state
     }
 
     if (!session) {

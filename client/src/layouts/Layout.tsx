@@ -1,36 +1,43 @@
 import React, { type ReactNode } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
 
 interface LayoutProps {
     children: ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-    const { user, signOut } = useAuth();
+    const { user, signOut, loading, globalLoading } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 
     const isDashboard = location.pathname === '/dashboard';
     const isAuthPage = location.pathname === '/';
 
+    if (loading || globalLoading) {
+        return <Loader />;
+    }
+
     return (
-        <div className="d-flex flex-column min-vh-100 bg-light">
-            <header className="bg-white border-bottom py-3 px-4 d-flex justify-content-center align-items-center sticky-top shadow-sm">
-                <h1 className="h2 mb-0 text-primary" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>
-                    Cookie Counter v4
-                </h1>
+        <div className="d-flex flex-column min-vh-100 bg-light align-items-center">
+            <header className="bg-white border-bottom py-3 shadow-sm w-100">
+                <div className="container text-center">
+                    <h1 className="h2 mb-0 text-primary" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>
+                        Cookie Counter v4
+                    </h1>
+                </div>
             </header>
 
-            <main className="flex-grow-1 container d-flex align-items-center justify-content-center py-4">
-                <div className="w-100" style={{ maxWidth: '500px' }}>
+            <main className="flex-grow-1 py-4 w-100 d-flex flex-column align-items-center justify-content-center">
+                <div className="main-content-container">
                     {children}
                 </div>
             </main>
 
             {!isAuthPage && (
-                <footer className="footer mt-auto py-4 bg-white border-top shadow-sm">
-                    <div className="container text-center px-4">
+                <footer className="footer mt-auto py-4 bg-white border-top shadow-sm w-100">
+                    <div className="main-content-container text-center">
                         {user && (
                             isDashboard ? (
                                 <button
