@@ -4,6 +4,8 @@ import Layout from './layouts/Layout';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import SalesPage from './pages/SalesPage';
+import NewSalePage from './pages/NewSalePage';
+import SalesHistoryPage from './pages/SalesHistoryPage';
 import InventoryPage from './pages/InventoryPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -43,6 +45,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sales/new"
+        element={
+          <ProtectedRoute>
+            <NewSalePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sales/history"
+        element={
+          <ProtectedRoute>
+            <SalesHistoryPage />
           </ProtectedRoute>
         }
       />
