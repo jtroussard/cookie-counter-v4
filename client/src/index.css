@@ -118,3 +118,73 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Uniform Muted Disabled State for Admin Buttons */
+.btn-muted-disabled:disabled {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  border-color: #adb5bd !important;
+  cursor: not-allowed;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+
+/* This ensures the wrapper doesn't add extra width/height and inherits the cursor */
+/* .d-inline-block[title] {
+  cursor: help;
+} */
+
+/* Ensure the button doesn't block the span's hover when disabled */
+.btn-muted-disabled:disabled {
+  pointer-events: none;
+}
+
+/* The wrapper container */
+.custom-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* The Tooltip Box */
+.custom-tooltip-wrapper[data-tooltip=""]:hover::after {
+  display: none;
+  /* Don't show if tooltip text is empty */
+}
+
+.custom-tooltip-wrapper:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 120%;
+  /* Space above the button */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  /* Prevents flickering */
+}
+
+/* Optional: The tiny arrow pointing down */
+.custom-tooltip-wrapper:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+  z-index: 1000;
+}
+
+/* Fix for disabled buttons */
+.btn-muted-disabled:disabled {
+  pointer-events: none;
+  /* Let the mouse "touch" the span wrapper instead */
+}
