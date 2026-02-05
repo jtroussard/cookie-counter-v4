@@ -22,7 +22,7 @@ const SalesPage: React.FC = () => {
                 label="Sales History"
                 icon="bi-clock-history"
                 to="/sales/history"
-                colorClass="btn-warning"
+                colorClass="btn-success"
             />
 
             <NavButton
@@ -45,10 +45,10 @@ const SalesPage: React.FC = () => {
                                 <p><strong>Manage your cookie sales here.</strong></p>
                                 <ul className="list-unstyled">
                                     <li className="mb-2">
-                                        <i className="bi bi-clock-history text-warning me-2"></i>
+                                        <i className="bi bi-clock-history text-success me-2"></i>
                                         <strong>Sales History:</strong> View past transactions and invoices.
                                     </li>
-                                    <li>
+                                    <li className="mb-2">
                                         <i className="bi bi-plus-circle-fill text-success me-2"></i>
                                         <strong>New Sale:</strong> Start a new order for a customer.
                                     </li>

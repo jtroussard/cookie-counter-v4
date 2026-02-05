@@ -7,6 +7,7 @@ interface Product {
     id: string;
     display_name: string;
     current_inventory_count: number;
+    price: number;
 }
 
 const NewSalePage: React.FC = () => {
@@ -15,7 +16,6 @@ const NewSalePage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
-    // Form State
     // Form State
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -40,7 +40,7 @@ const NewSalePage: React.FC = () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('products')
-            .select('id, display_name, current_inventory_count')
+            .select('id, display_name, current_inventory_count, price')
             .order('display_name', { ascending: true });
 
         if (data) {
@@ -80,6 +80,11 @@ const NewSalePage: React.FC = () => {
 
     // 3. Validation & Submission
     const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+    const totalPrice = Object.entries(cart).reduce((sum, [id, qty]) => {
+        const product = products.find(p => p.id === id);
+        return sum + (qty * (product?.price || 0));
+    }, 0);
+
     const hasName = firstName.trim().length > 0 || lastName.trim().length > 0;
     const isValid = totalItems > 0 && hasName;
 
@@ -105,8 +110,8 @@ const NewSalePage: React.FC = () => {
                 .insert([{
                     customer_name: customerName,
                     customer_address: fullAddress,
-                    customer_email: email.trim()
-                    // total_amount: 0 // Optional: We could calculate this if we had prices, but DB default is 0
+                    customer_email: email.trim(),
+                    total_amount: totalPrice
                 }])
                 .select()
                 .single();
@@ -121,7 +126,6 @@ const NewSalePage: React.FC = () => {
                     invoice_id: invoiceData.id,
                     product_id: productId,
                     qty: qty
-                    // total_price: ... // Optional if we had price in frontend state
                 }));
 
             const { error: salesError } = await supabase
@@ -225,7 +229,7 @@ const NewSalePage: React.FC = () => {
             {/* Product List */}
             <div className="card shadow-sm border-0" style={{ borderRadius: '15px' }}>
                 <div className="card-header bg-white border-0 pt-3 pb-2" style={{ borderRadius: '15px 15px 0 0' }}>
-                    <h5 className="text-muted text-uppercase small fw-bold mb-0">Select Products</h5>
+                    <h5 className="text-muted text-uppercase small fw-bold mb-0">Select Cookies</h5>
                 </div>
                 <div className="table-responsive">
                     <table className="table mb-0 align-middle">
@@ -238,9 +242,12 @@ const NewSalePage: React.FC = () => {
                                     <tr key={product.id} className={isOutOfStock ? 'opacity-50' : ''}>
                                         <td className="ps-4 py-3 border-light">
                                             <div className="fw-bold text-dark">{product.display_name}</div>
-                                            <small className={`badge rounded-pill ${isOutOfStock ? 'bg-secondary' : 'bg-info'} text-white`}>
-                                                {isOutOfStock ? 'Out of Stock' : `${product.current_inventory_count} available`}
-                                            </small>
+                                            <div className="d-flex align-items-center gap-2">
+                                                <small className={`badge rounded-pill ${isOutOfStock ? 'bg-secondary' : 'bg-info'} text-white`}>
+                                                    {isOutOfStock ? 'Out of Stock' : `${product.current_inventory_count} available`}
+                                                </small>
+                                                <small className="text-muted">${product.price.toFixed(2)}</small>
+                                            </div>
                                         </td>
                                         <td className="pe-3 text-end border-light" style={{ minWidth: '140px' }}>
                                             <div className="d-flex align-items-center justify-content-end gap-2">
@@ -279,8 +286,11 @@ const NewSalePage: React.FC = () => {
             <div className="card shadow mt-4 border-0 bg-light" style={{ borderRadius: '15px' }}>
                 <div className="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <span className="text-muted small text-uppercase fw-bold d-block">Total Items</span>
-                        <span className="display-6 fw-bold text-primary">{totalItems}</span>
+                        <span className="text-muted small text-uppercase fw-bold d-block">Total</span>
+                        <div className="d-flex align-items-baseline gap-2">
+                            <span className="display-6 fw-bold text-primary">${totalPrice.toFixed(2)}</span>
+                            <span className="text-muted small">({totalItems} items)</span>
+                        </div>
                     </div>
                     <div className="d-flex gap-2">
                         <button
@@ -332,7 +342,7 @@ const NewSalePage: React.FC = () => {
                                     </ul>
                                     <div className="border-top mt-2 pt-2 d-flex justify-content-between">
                                         <strong>Total</strong>
-                                        <strong>{totalItems} boxes</strong>
+                                        <strong>{totalItems} boxes (${totalPrice.toFixed(2)})</strong>
                                     </div>
                                 </div>
                             </div>
