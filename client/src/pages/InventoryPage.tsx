@@ -24,6 +24,7 @@ const InventoryPage: React.FC = () => {
         const { data, error } = await supabase
             .from('products')
             .select('id, display_name, current_inventory_count')
+            .neq('display_name', 'Donation')
             .order('display_name', { ascending: true });
 
         if (error) {

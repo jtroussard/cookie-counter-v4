@@ -234,7 +234,8 @@ const NewSalePage: React.FC = () => {
                 <div className="table-responsive">
                     <table className="table mb-0 align-middle">
                         <tbody>
-                            {products.map(product => {
+                            {/* Cookies Section */}
+                            {products.filter(p => p.display_name !== 'Donation').map(product => {
                                 const isOutOfStock = product.current_inventory_count <= 0;
                                 const currentQty = cart[product.id] || 0;
 
@@ -268,6 +269,59 @@ const NewSalePage: React.FC = () => {
                                                     className="btn btn-outline-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
                                                     style={{ width: '32px', height: '32px' }}
                                                     disabled={isOutOfStock || currentQty >= product.current_inventory_count}
+                                                    onClick={() => updateQuantity(product.id, 1)}
+                                                >
+                                                    <i className="bi bi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+
+                            {/* Other Options Header */}
+                            {products.some(p => p.display_name === 'Donation') && (
+                                <tr className="bg-light">
+                                    <td colSpan={2} className="px-4 py-2 border-light">
+                                        <small className="text-muted fw-bold text-uppercase">Other Options</small>
+                                    </td>
+                                </tr>
+                            )}
+
+                            {/* Donation Section */}
+                            {products.filter(p => p.display_name === 'Donation').map(product => {
+                                // For donation, we treat stock as infinite/always available
+                                const currentQty = cart[product.id] || 0;
+
+                                return (
+                                    <tr key={product.id}>
+                                        <td className="ps-4 py-3 border-light">
+                                            <div className="fw-bold text-dark">{product.display_name}</div>
+                                            <div className="d-flex align-items-center gap-2">
+                                                <small className="badge rounded-pill bg-success text-white">
+                                                    Always Available
+                                                </small>
+                                                <small className="text-muted">${product.price.toFixed(2)}</small>
+                                            </div>
+                                        </td>
+                                        <td className="pe-3 text-end border-light" style={{ minWidth: '140px' }}>
+                                            <div className="d-flex align-items-center justify-content-end gap-2">
+                                                <button
+                                                    className="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                                                    style={{ width: '32px', height: '32px' }}
+                                                    disabled={currentQty <= 0}
+                                                    onClick={() => updateQuantity(product.id, -1)}
+                                                >
+                                                    <i className="bi bi-dash"></i>
+                                                </button>
+
+                                                <span className="fw-bold fs-5" style={{ width: '30px', textAlign: 'center' }}>
+                                                    {currentQty}
+                                                </span>
+
+                                                <button
+                                                    className="btn btn-outline-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                                                    style={{ width: '32px', height: '32px' }}
                                                     onClick={() => updateQuantity(product.id, 1)}
                                                 >
                                                     <i className="bi bi-plus"></i>
